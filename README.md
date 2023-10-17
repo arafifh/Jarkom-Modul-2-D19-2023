@@ -99,3 +99,28 @@
   	netmask 255.255.255.0
   	gateway 10.31.4.1
     ```
+## Sebelum Memulai
+Di dalam setiap node, eksekusi perintah berikut atau tambahkan perintah ini ke dalam file `.bashrc` agar perintah tersebut akan tetap berjalan saat kita membuka dan menutup proyek.
+
+- **Pandudewanata**
+  ```
+  iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.31.0.0/16
+  ```
+- **Yudhistira & Werkudara**
+  ```
+  echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+  apt-get update
+  apt-get install bind9 -y      
+  ```
+- **Nakula & Sadewa**
+  ```
+  echo '
+  nameserver 192.168.122.1
+  nameserver 10.31.2.2 # IP Yudhistira
+  nameserver 10.31.1.2 # IP Werkudara
+  ' > /etc/resolv.conf
+  apt-get update
+  apt-get install dnsutils -y
+  apt-get install lynx -y
+  ```
+
