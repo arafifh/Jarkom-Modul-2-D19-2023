@@ -124,3 +124,51 @@ Di dalam setiap node, eksekusi perintah berikut atau tambahkan perintah ini ke d
   apt-get install lynx -y
   ```
 
+## Soal 1 
+> Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjuna merupakan Load Balancer yang terdiri dari beberapa Web Server yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Buatlah topologi dengan pembagian sebagai berikut. Folder topologi dapat diakses pada drive berikut
+### Script
+
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client *Nakula* dan *Sadewa*.
+```
+ping google.com -c 5
+```
+
+### Hasil
+
+
+## Soal 2
+> Buatlah website utama dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
+
+### Script
+
+```
+echo 'zone "arjuna.d19.com" {
+    type master;
+    notify yes;
+    also-notify { 10.31.1.2; };
+    allow-transfer { 10.31.1.2; };
+    file "/etc/bind/jarkom/arjuna.d19.com";
+};
+
+mkdir /etc/bind/jarkom
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.d19.com
+
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     arjuna.d19.com. root.arjuna.d19.com. (
+                            100         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      arjuna.d19.com.
+@       IN      A       10.31.2.2     ; IP Yudhistira
+www     IN      CNAME   arjuna.d19.com.
+@       IN      AAAA    ::1' > /etc/bind/jarkom/arjuna.d19.com
+
+service bind9 restart
+```
