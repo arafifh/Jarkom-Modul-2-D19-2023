@@ -103,17 +103,17 @@
 Di dalam setiap node, eksekusi perintah berikut atau tambahkan perintah ini ke dalam file `.bashrc` agar perintah tersebut akan tetap berjalan saat kita membuka dan menutup proyek.
 
 - **Pandudewanata**
-  ```
+  ```sh
   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.31.0.0/16
   ```
 - **Yudhistira & Werkudara**
-  ```
+  ```sh
   echo 'nameserver 192.168.122.1' > /etc/resolv.conf
   apt-get update
   apt-get install bind9 -y      
   ```
 - **Nakula & Sadewa**
-  ```
+  ```sh
   echo '
   nameserver 192.168.122.1
   nameserver 10.31.2.2 # IP Yudhistira
@@ -141,7 +141,7 @@ ping google.com -c 5
 
 ### Script
 
-```
+```sh
 echo 'zone "arjuna.d19.com" {
     type master;
     notify yes;
@@ -192,7 +192,7 @@ ping www.arjuna.d19.com -c 5
 
 ### Script
 **Yudhistira**
-```
+```sh
 echo 'zone "arjuna.d19.com" {
     type master;
     notify yes;
@@ -250,7 +250,7 @@ ping www.abimanyu.d19.com -c 5
 
 **Yudhistira**
 
-```
+```sh
 echo ';
 ; BIND data file for local loopback interface
 ;
@@ -285,7 +285,7 @@ ping parikesit.abimanyu.d19.com -c 5
 > Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
 Untuk membuat reverse domain `abimanyu.d19.com`, gunakan script berikut di DNS Master.
-```
+```sh
 zone "4.31.10.in-addr.arpa" {
     type master;
     file "/etc/bind/jarkom/4.31.10.in-addr.arpa";
@@ -312,13 +312,66 @@ $TTL    604800
 ```
 ### Hasil
 
-jalankan perintah berikut
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client Nakula atau Sadewa.
 ```
 host -t PTR 10.31.2.2
 ```
 
 ![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/a3a5804e-4d9c-471d-be1a-b36ca641a5ab)
 
-### Soal 6
+## Soal 6
+> Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
 
+### Script
+**Yudhistira**
+```sh
+echo 'zone "arjuna.d19.com" {
+    type master;
+    notify yes;
+    also-notify { 10.31.1.2; };
+    allow-transfer { 10.31.1.2; };
+    file "/etc/bind/jarkom/arjuna.d19.com";
+};
+zone "abimanyu.d19.com" {
+    type master;
+    notify yes;
+    also-notify { 10.31.1.2; };
+    allow-transfer { 10.31.1.2; };
+    file "/etc/bind/jarkom/abimanyu.d19.com";
+};
+zone "4.31.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/jarkom/4.31.10.in-addr.arpa";
+};
+' > /etc/bind/named.conf.local
+
+service bind9 restart
+service bind9 stop
+```
+
+**Werkudara**
+```sh
+echo 'zone "arjuna.d19.com" {
+    type slave;
+    masters { 10.31.2.2; };
+    file "/var/lib/bind/arjuna.d19.com";
+};
+zone "abimanyu.d19.com" {
+    type slave;
+    masters { 10.31.2.2; };
+    file "/var/lib/bind/abimanyu.d19.com";
+};
+
+service bind9 restart
+```
+
+### Hasil
+
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client Nakula atau Sadewa.
+```
+ping abimanyu.d19.com -c 5
+ping www.abimanyu.d19.com -c 5
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/1ec7e402-a8c6-48fc-a3d6-3f7feae9028a)
 
