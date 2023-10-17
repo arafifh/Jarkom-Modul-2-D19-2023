@@ -4,7 +4,7 @@
 | Nama | NRP |
 |---------------------------|------------|
 |Adrian Ismu Arifianto | 5025211116 |
-| | 5025 |
+|Ahmad Rafif Hikmatiar | 5025211247 |
 
 ## Topologi
 ![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/1c398fec-0f05-4f6c-83e3-006ab2313971)
@@ -444,9 +444,72 @@ ping baratayuda.abimanyu.d19.com -c 5
 
 
 ## Soal 8
+> Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
+
+### File baratayuda.abimanyu.d19.com
+![WhatsApp Image 2023-10-17 at 18 38 00](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/4962274b-df6b-4d83-a166-12b597e03a13)
+
+### Hasil
+Untuk testing, kita ping rjp.baratayuda.abimanyu.d19.com dan www.rjp.baratayuda.abimanyu.d19.com di client yaitu node Sadewa.
+![WhatsApp Image 2023-10-17 at 18 39 17](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/cd7b44a3-be7a-40ec-9fda-fcec627a2a0a)
+
 ## Soal 9
+> Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
+
+### File /etc/nginx/sites-enabled/lb-jarkom dalam node Arjuna-LB sebagai Load Balancer
+![WhatsApp Image 2023-10-17 at 18 48 29](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/454ff603-9220-4043-83f7-058406b43195)
+Setelah itu kita buat symlink dengan menjalankan perintah
+```
+ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled/jarkom
+```
+
+### File /etc/nginx/sites-enabled/jarkom
+#### Prabukusuma
+![WhatsApp Image 2023-10-17 at 18 47 01](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/fd4a6848-ee07-4874-85ec-196e062f76c8)
+#### Abimanyu
+![WhatsApp Image 2023-10-17 at 18 47 38](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/bba94167-8e9f-47d3-a623-dc3df51805a7)
+#### Wisanggeni
+![WhatsApp Image 2023-10-17 at 18 47 56](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/849c934b-38a1-4e49-a397-8eba4578cc37)
+
+### Hasil
+Untuk testing, kita lakukan lynx di node Sadewa sebagai client dengan perintah
+```
+lynx [ip web server]:[port]
+```
+![WhatsApp Image 2023-10-17 at 18 53 52](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/b3f2abf1-de9d-4d8b-83a2-63ea1834b42f)
+![WhatsApp Image 2023-10-17 at 18 53 38](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/e4f5cee6-0f41-4082-825f-95c2c39ed729)
+![WhatsApp Image 2023-10-17 at 18 54 09](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/3b019064-25a4-4290-8243-1590e5ce00fb)
+
+
 ## Soal 10
+> Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
+    - Prabakusuma:8001
+    - Abimanyu:8002
+    - Wisanggeni:8003
+
+### Hasil
+Sudah langsung saya aplikasikan di nomor 9, namun bedanya untuk melakukan testing di Sadewa sebagai client gunakan perintah
+```
+lynx arjuna.d19.com
+```
+dan lakukan secara berulang maka halaman akan otomatis terganti
+
 ## Soal 11
+> Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy.
+
+### File /var/www/abimanyu.d19/index.php
+![WhatsApp Image 2023-10-17 at 19 06 58](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/5c7208da-b2da-4592-ae03-db09d21f2ae1)
+
+### File /etc/apache2/sites-available/abimanyu.d19.com.conf
+![WhatsApp Image 2023-10-17 at 19 04 18](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/dad66bfb-5723-48f6-8a9d-67ddb967ada8)
+
+### Hasil
+Untuk testing, kita lakukan lynx di node Sadewa sebagai client dengan perintah
+```
+lynx abimanyu.d19.com
+```
+![WhatsApp Image 2023-10-17 at 19 07 29](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/89500557/e9da8208-0f6b-440f-9904-87939556fb1e)
+
 ## Soal 12
 ## Soal 13
 ## Soal 14
