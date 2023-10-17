@@ -172,3 +172,153 @@ www     IN      CNAME   arjuna.d19.com.
 
 service bind9 restart
 ```
+
+### Hasil
+
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client *Nakula* dan *Sadewa*.
+
+```
+ping arjuna.d19.com -c 5
+ping www.arjuna.d19.com -c 5
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/73297d52-7ae1-4b31-be1a-a27f0c1583c8)
+
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/3cb3a8ef-8652-4f70-8ed7-74740ca41ffd)
+
+## Soal 3
+> Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
+
+### Script
+**Yudhistira**
+```
+echo 'zone "arjuna.d19.com" {
+    type master;
+    notify yes;
+    also-notify { 10.31.1.2; };
+    allow-transfer { 10.31.1.2; };
+    file "/etc/bind/jarkom/arjuna.d19.com";
+};
+zone "abimanyu.d19.com" {
+    type master;
+    notify yes;
+    also-notify { 10.31.1.2; };
+    allow-transfer { 10.31.1.2; };
+    file "/etc/bind/jarkom/abimanyu.d19.com";
+};
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.d19.com
+
+cp /etc/bind/db.local /etc/bind/jarkom/abimanyu.d19.com
+
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.d19.com. root.abimanyu.d19.com. (
+                            100         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@               IN      NS      abimanyu.d19.com.
+@               IN      A       10.31.2.2     ; IP Yudhistira
+www             IN      CNAME   abimanyu.d19.com.
+' > /etc/bind/jarkom/abimanyu.d19.com
+
+service bind9 restart
+```
+### Hasil
+
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client *Nakula* dan *Sadewa*.
+
+```
+ping abimanyu.d19.com -c 5
+ping www.abimanyu.d19.com -c 5
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/d5f4a49c-a4d2-4d5a-ad16-06c9ce34c511)
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/672dc75b-603c-4e7e-a9e8-ccff953dbf90)
+
+## Soal 4
+> Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
+
+### Script
+
+**Yudhistira**
+
+```
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.d19.com. root.abimanyu.d19.com. (
+                            100         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@               IN      NS      abimanyu.d19.com.
+@               IN      A       10.31.2.2     ; IP Yudhistira
+www             IN      CNAME   abimanyu.d19.com.
+parikesit       IN      A       10.31.4.4       ; IP Abimanyu
+' > /etc/bind/jarkom/abimanyu.d19.com
+
+service bind9 restart
+```
+
+### Hasil
+
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client *Nakula* dan *Sadewa*.
+
+```
+ping parikesit.abimanyu.d19.com -c 5
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/4be627ab-f477-4abe-a65e-ccb86339c268)
+
+## Soal 5
+> Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
+
+Untuk membuat reverse domain `abimanyu.d19.com`, gunakan script berikut di DNS Master.
+```
+zone "4.31.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/jarkom/4.31.10.in-addr.arpa";
+};
+' > /etc/bind/named.conf.local
+
+cp /etc/bind/db.local /etc/bind/jarkom/4.31.10.in-addr.arpa
+
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.d19.com. root.abimanyu.d19.com. (
+                            100         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+
+;
+4.31.10.in-addr.arpa.    IN      NS      abimanyu.d19.com.
+4                        IN      PTR     abimanyu.d19.com. ;
+' > /etc/bind/jarkom/4.31.10.in-addr.arpa
+```
+### Hasil
+
+jalankan perintah berikut
+```
+host -t PTR 10.31.2.2
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/a3a5804e-4d9c-471d-be1a-b36ca641a5ab)
+
+### Soal 6
+
+
