@@ -375,3 +375,84 @@ ping www.abimanyu.d19.com -c 5
 
 ![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/1ec7e402-a8c6-48fc-a3d6-3f7feae9028a)
 
+## Soal 7
+> Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda
+
+### Script
+```sh
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.d19.com. root.abimanyu.d19.com. (
+                            100         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@               IN      NS      abimanyu.d19.com.
+@               IN      A       10.31.2.2     ; IP Yudhistira
+www             IN      CNAME   abimanyu.d19.com.
+parikesit       IN      A       10.31.4.4       ; IP Abimanyu
+ns1             IN      A       10.31.1.2       ; IP Werkudara
+baratayuda      IN      NS      ns1
+@               IN      AAAA    ::1' > /etc/bind/jarkom/abimanyu.d19.com
+
+echo 'options {
+        directory "/var/cache/bind";
+
+        allow-query{any;};
+
+        auth-nxdomain no;    # conform to RFC1035
+        listen-on-v6 { any; };
+};' > /etc/bind/named.conf.options
+
+service bind9 restart
+```
+**Werkudara**
+```sh
+zone "baratayuda.abimanyu.d19.com" {
+    type master;
+    file "/etc/bind/baratayuda/baratayuda.abimanyu.d19.com";
+};' > /etc/bind/named.conf.local
+
+mkdir /etc/bind/baratayuda
+
+cp /etc/bind/db.local /etc/bind/baratayuda/baratayuda.abimanyu.d19.com
+
+echo 'options {
+        directory "/var/cache/bind";
+        forwarders {
+            192.168.122.1;
+        };
+        allow-query{any;};
+
+        auth-nxdomain no;    # conform to RFC1035
+        listen-on-v6 { any; };
+};' > /etc/bind/named.conf.options
+```
+
+### Hasil
+Untuk melakukan pengujian, kita dapat mengeksekusi perintah berikut pada node client Nakula atau Sadewa.
+```
+ping www.baratayuda.abimanyu.d19.com -c 5
+ping baratayuda.abimanyu.d19.com -c 5
+```
+
+![image](https://github.com/arafifh/Jarkom-Modul-2-D19-2023/assets/71255346/841bb3f2-d218-49ff-bcaa-12270ae2e5c0)
+
+
+## Soal 8
+## Soal 9
+## Soal 10
+## Soal 11
+## Soal 12
+## Soal 13
+## Soal 14
+## Soal 15
+## Soal 16
+## Soal 17
+## Soal 18
+## Soal 19
+## Soal 20
